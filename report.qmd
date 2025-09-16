@@ -9,13 +9,13 @@ execute:
 ---
 
 ## Team & Certification
-- Team member 1: *Isabella Darko / Normalized and plotted data set B*
-- Team member 2: *Name / contribution*
-- Team member 3: *Name / contribution*
-- Team member 4: *Name / contribution*
+
+- Team member 1: _Isabella Darko / Normalized and plotted data set B_
+- Team member 2: _Name / contribution_
+- Team member 3: _Name / contribution_
+- Team member 4: _Name / contribution_
 
 (Attach the signed certification page from the assignment PDF.)
-
 
 # Part 1 — Dataset Exploration and Linear Separation
 
@@ -23,7 +23,188 @@ execute:
 
 ## Dataset B
 
-## Dataset B
+### Q1 — Normalize and visualize Dataset B
 
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Load the dataset into a DataFrame
+dfB = pd.read_csv("data/groupB.txt", header=None, names=["price","weight","type"])
+
+# 2. Normalize price and weight (min-max)
+dfB["price"] = (dfB["price"] - dfB["price"].min()) / (dfB["price"].max() - dfB["price"].min())
+dfB["weight"] = (dfB["weight"] - dfB["weight"].min()) / (dfB["weight"].max() - dfB["weight"].min())
+
+# 3. Show first 5 rows as an HTML table
+dfB.head()
+```
+
+```{python}
+# 4. Scatter plot of normalized data
+
+# Split the dataset into two groups based on the "type" column
+# type = 0 → small cars, type = 1 → big cars
+small = dfB[dfB["type"]==0]
+big   = dfB[dfB["type"]==1]
+
+# Start a new figure
+plt.figure()
+
+# Plot the small cars (purple dots)
+# x-axis = normalized price, y-axis = normalized weight
+# alpha=0.6 makes the dots slightly transparent so overlaps are visible
+plt.scatter(small["price"], small["weight"], alpha=0.6, label="Small (0)", color="purple")
+
+# Plot the big cars (pink dots)
+plt.scatter(big["price"],   big["weight"],   alpha=0.6, label="Big (1)", color="pink")
+
+# Add axis labels
+plt.xlabel("Price (normalized)")
+plt.ylabel("Weight (normalized)")
+
+# Add a plot title
+plt.title("Dataset B — Two Categories (Normalized)")
+
+# Show the legend so we know which color = which type
+plt.legend()
+
+# Adjust the layout so labels/titles don't overlap
+plt.tight_layout()
+
+# Save the figure to a PNG file (in the figs/ folder)
+plt.savefig("figs/B_scatter.png", dpi=150)
+
+# Display the figure in the Quarto-rendered HTML report
+plt.show()
+```
+
+### Q2 — Drawing my line on top of the scatter
+
+```{python}
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+m, b = -1.0, 1.0   # slope and intercept for the line
+
+# split the data into small and big again
+small = dfB[dfB["type"] == 0]
+big   = dfB[dfB["type"] == 1]
+
+# x values from 0 to 1 since everything is normalized
+x_vals = np.linspace(0, 1, 500)
+y_vals = m * x_vals + b
+
+plt.figure()
+
+# scatter plot of both groups (purple circles vs pink squares)
+plt.scatter(small["price"], small["weight"], alpha=0.6, label="Small (0)", color="purple", marker="o")
+plt.scatter(big["price"],   big["weight"],   alpha=0.6, label="Big (1)",   color="pink",   marker="s")
+
+# plot the line across the graph
+plt.plot(x_vals, y_vals, color="black", linewidth=2, label=f"y = {m}x + {b}")
+
+# keep the axes locked to the normalized range
+plt.xlim(0, 1)
+plt.ylim(0, 1)
+
+plt.xlabel("Price (normalized)")
+plt.ylabel("Weight (normalized)")
+plt.title("Dataset B — Slope Seperator")
+plt.legend()
+plt.tight_layout()
+plt.savefig("figs/B_separator.png", dpi=150)
+plt.show()
+```
+
+### Q3 — Turning line into the neuron inequality
+
+```{python}
+# my line is: y = m*x + b
+m, b = -1.0, 1.0
+
+# flip it into neuron form: w1*x1 + w2*x2 >= theta
+w1 = -m     # weight for price
+w2 = 1.0    # weight for weight
+theta = b   # threshold
+
+print("my weights and threshold:")
+print("w1 =", w1)
+print("w2 =", w2)
+print("theta =", theta)
+
+# now use these to classify points in dfB
+net = w1*dfB["price"] + w2*dfB["weight"]
+pred = (net >= theta).astype(int)
+
+# just show a few rows to check
+dfB.assign(pred=pred)[["price","weight","type","pred"]].head()
+
+```
+
+### Q4 - Confusion matrix (TP, TN, FP, FN)
+
+```{python}
+# true labels and my predictions from Q3
+y_true = dfB["type"].astype(int)
+y_pred = pred.astype(int)
+
+TP = int(((y_true == 1) & (y_pred == 1)).sum())
+TN = int(((y_true == 0) & (y_pred == 0)).sum())
+FP = int(((y_true == 0) & (y_pred == 1)).sum())
+FN = int(((y_true == 1) & (y_pred == 0)).sum())
+
+print("confusion matrix counts:")
+print("TP:", TP, "  FN:", FN)
+print("FP:", FP, "  TN:", TN)
+
+# table
+import pandas as pd
+pd.DataFrame(
+    [[TP, FN],
+     [FP, TN]],
+    index=["Actual 1 (Big)", "Actual 0 (Small)"],
+    columns=["Pred 1 (Big)", "Pred 0 (Small)"]
+)
+```
+
+### Q5 Accuray and Rates
+
+```{python}
+# I already have TP, TN, FP, FN from Q4
+N = TP + TN + FP + FN
+
+accuracy   = (TP + TN) / N if N else float("nan")
+error_rate = 1 - accuracy if N else float("nan")
+
+TPR = TP / (TP + FN) if (TP + FN) else float("nan")   # recall for big (class 1)
+TNR = TN / (TN + FP) if (TN + FP) else float("nan")   # specificity for small (class 0)
+FPR = FP / (FP + TN) if (FP + TN) else float("nan")   # false alarms: small → big
+FNR = FN / (FN + TP) if (FN + TP) else float("nan")   # misses: big → small
+
+print("metrics:")
+print("accuracy:", round(accuracy, 4))
+print("error_rate:", round(error_rate, 4))
+print("TPR:", round(TPR, 4))
+print("TNR:", round(TNR, 4))
+print("FPR:", round(FPR, 4))
+print("FNR:", round(FNR, 4))
+
+# table for the report
+import pandas as pd
+pd.DataFrame([{
+    "Accuracy": accuracy,
+    "Error": error_rate,
+    "TPR": TPR,
+    "TNR": TNR,
+    "FPR": FPR,
+    "FNR": FNR
+}]).round(4)
+```
+
+### Q6 - Similarity of Data Sets
+
+## Dataset C
 
 # Part 2 — McCulloch–Pitts Neuron
