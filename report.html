@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Your Team Name">
 
 <title>CMSC 436 — Project 1</title>
 <style>
@@ -90,12 +89,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Your Team Name </p>
-          </div>
-  </div>
     
   
     
@@ -125,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="dataset-b">Dataset B</h2>
 <section id="q1-normalize-and-visualize-dataset-b" class="level3">
 <h3 class="anchored" data-anchor-id="q1-normalize-and-visualize-dataset-b">Q1 — Normalize and visualize Dataset B</h3>
-<div id="7020d02a" class="cell" data-execution_count="1">
+<div id="f87973f6" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -188,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="34b7251d" class="cell" data-execution_count="2">
+<div id="6efa21af" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Scatter plot of normalized data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the dataset into two groups based on the "type" column</span></span>
@@ -236,7 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="q2-drawing-my-line-on-top-of-the-scatter" class="level3">
 <h3 class="anchored" data-anchor-id="q2-drawing-my-line-on-top-of-the-scatter">Q2 — Drawing my line on top of the scatter</h3>
-<div id="d7b6bb06" class="cell" data-execution_count="3">
+<div id="c6a0b0cd" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -281,7 +274,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="q3-turning-line-into-the-neuron-inequality" class="level3">
 <h3 class="anchored" data-anchor-id="q3-turning-line-into-the-neuron-inequality">Q3 — Turning line into the neuron inequality</h3>
-<div id="0a995667" class="cell" data-execution_count="4">
+<div id="6b322419" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># my line is: y = m*x + b</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>m, b <span class="op">=</span> <span class="op">-</span><span class="fl">1.0</span>, <span class="fl">1.0</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -366,7 +359,7 @@ theta = 1.0</code></pre>
 </section>
 <section id="q4---confusion-matrix-tp-tn-fp-fn" class="level3">
 <h3 class="anchored" data-anchor-id="q4---confusion-matrix-tp-tn-fp-fn">Q4 - Confusion matrix (TP, TN, FP, FN)</h3>
-<div id="5cbf1e59" class="cell" data-execution_count="5">
+<div id="dede9214" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># true labels and my predictions from Q3</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> dfB[<span class="st">"type"</span>].astype(<span class="bu">int</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> pred.astype(<span class="bu">int</span>)</span>
@@ -425,7 +418,7 @@ FP: 32   TN: 1968</code></pre>
 </section>
 <section id="q5-accuray-and-rates" class="level3">
 <h3 class="anchored" data-anchor-id="q5-accuray-and-rates">Q5 Accuray and Rates</h3>
-<div id="76a37940" class="cell" data-execution_count="6">
+<div id="d77724fe" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I already have TP, TN, FP, FN from Q4</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> TP <span class="op">+</span> TN <span class="op">+</span> FP <span class="op">+</span> FN</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>

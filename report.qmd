@@ -1,6 +1,6 @@
 ---
 title: "CMSC 436 — Project 1"
-author: "Your Team Name"
+author: "Hudson, Isabella, Jacob, and Hayat"
 format: html
 execute:
   echo: true
