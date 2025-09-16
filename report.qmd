@@ -1,0 +1,29 @@
+---
+title: "CMSC 436 — Project 1"
+author: "Your Team Name"
+format: html
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Team & Certification
+- Team member 1: *Isabella Darko / Normalized and plotted data set B*
+- Team member 2: *Name / contribution*
+- Team member 3: *Name / contribution*
+- Team member 4: *Name / contribution*
+
+(Attach the signed certification page from the assignment PDF.)
+
+
+# Part 1 — Dataset Exploration and Linear Separation
+
+## Dataset A
+
+## Dataset B
+
+## Dataset B
+
+
+# Part 2 — McCulloch–Pitts Neuron
