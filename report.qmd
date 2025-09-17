@@ -1,7 +1,16 @@
 ---
 title: "CMSC 436 — Project 1"
 author: "Hudson, Isabella, Jacob, and Hayat"
-format: html
+format:
+  pdf:
+    pdf-engine: xelatex
+    code-block-font-size: \footnotesize
+    include-in-header:
+      text: |
+        % Enable line wrapping in code blocks
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,commandchars=\\\{\}}
+        \RecustomVerbatimEnvironment{Verbatim}{Verbatim}{breaklines,breakanywhere}
 execute:
   echo: true
   warning: false
@@ -201,25 +210,31 @@ plt.show()
 ```{python}
 import pandas as pd
 from sklearn.metrics import confusion_matrix
-from IPython.display import display
 
 # predictions
 y_pred = clf.predict(X)
-true_labels = y
+y_true = y
 
 # compute confusion matrix (tn, fp, fn, tp)
-tn, fp, fn, tp = confusion_matrix(true_labels, y_pred).ravel()
+tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
 
-# table matching your classmate's format (TP, FP / FN, TN)
-confusion_matrix_df = pd.DataFrame(
-    [[tp, fp],
-     [fn, tn]],
-    index=['Actual Big (1)', 'Actual Small (0)'],
-    columns=['Predicted Big (1)', 'Predicted Small (0)']
+# assign to match your style
+TP = int(tp)
+TN = int(tn)
+FP = int(fp)
+FN = int(fn)
+
+print("confusion matrix counts:")
+print("TP:", TP, "  FN:", FN)
+print("FP:", FP, "  TN:", TN)
+
+# table
+pd.DataFrame(
+    [[TP, FN],
+     [FP, TN]],
+    index=["Actual 1 (Big)", "Actual 0 (Small)"],
+    columns=["Pred 1 (Big)", "Pred 0 (Small)"]
 )
-
-print("Confusion Matrix:")
-display(confusion_matrix_df)
 ```
 
 ### Q5 — Accuracy and Rates
