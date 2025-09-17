@@ -11,9 +11,9 @@ execute:
 ## Team & Certification
 
 - Team member 1: _Isabella Darko / Normalized and plotted data set B_
-- Team member 2: _Name / contribution_
+- Team member 2: _Hudson Finocchio / Normalized and plotted data set C_
 - Team member 3: _Name / contribution_
-- Team member 4: _Name / contribution_
+- Team member 4: _Jacob Alexander / Created truth table and logic function_
 
 (Attach the signed certification page from the assignment PDF.)
 
@@ -169,7 +169,7 @@ pd.DataFrame(
 )
 ```
 
-### Q5 Accuray and Rates
+### Q5 Accuracy and Rates
 
 ```{python}
 # I already have TP, TN, FP, FN from Q4
@@ -203,8 +203,230 @@ pd.DataFrame([{
 }]).round(4)
 ```
 
-### Q6 - Similarity of Data Sets
-
 ## Dataset C
 
+### Q1 — Normalize and visualize Dataset C
+```{python}
+import numpy as np
+import matplotlib.patches as mpatches
+
+# input data: price (USD), weight (lbs), and size (small (0) or big (1))
+group_c_df = pd.read_csv("data/groupC.txt", header=None, names=["price","weight","size"])
+
+# normalize columns in dataframe
+def normalize(df: pd.DataFrame, columns: list):
+
+    df_norm = df.copy()
+
+    for column in columns:
+        min_value = df_norm[column].min()
+        max_value = df_norm[column].max()
+        df_norm[column] = (df_norm[column] - min_value) / (max_value - min_value)
+
+    return df_norm
+
+processed_df = normalize(group_c_df, columns=['price', 'weight'])
+
+processed_df.head(5)
+```
+```{python}
+
+# prepare axes and viz for points
+x_axis = processed_df['weight'].values
+y_axis = processed_df['price'].values
+colors = processed_df['size'].values
+
+# plot everything
+plt.figure(figsize=(6, 6))
+plt.scatter(x_axis, y_axis, c=colors, cmap="bwr", alpha=0.6, s=80, edgecolors="k")
+plt.xlabel("weight (lbs)")
+plt.ylabel("price (USD)")
+plt.title("price and weight of cars of varying size")
+
+plt.grid(True)
+plt.show()
+```
+### Q2 — Drawing my line on top of the scatter
+```{python}
+# estimated function
+def f(x):
+    return -.79*x + .88
+
+# get values for function
+
+x = np.linspace(0, 1, 30)
+y = f(x)
+
+# prepare axes and viz for points
+x_axis = processed_df['weight'].values
+y_axis = processed_df['price'].values
+colors = processed_df['size'].values
+
+# plot everything again
+plt.figure(figsize=(6, 6))
+plt.scatter(x_axis, y_axis, c=colors, cmap="bwr", alpha=0.6, s=80, edgecolors="k")
+plt.xlabel("weight (lbs)")
+plt.ylabel("price (USD)")
+plt.title("price and weight of cars of varying size")
+
+plt.plot(x, y, color='green', linestyle='--', linewidth=2, label="y =  -0.79x + 0.88")
+small_patch = mpatches.Patch(color='blue', label='Small (0)')
+big_patch = mpatches.Patch(color='red', label='Big (1)')
+
+plt.legend(handles=[small_patch, big_patch],
+           title="Car size",
+           loc="upper right")
+
+plt.grid(True)
+plt.show()
+```
+### Q3 — Turning line into the neuron inequality
+
+We start with the estimated linear function:
+
+$$
+\text{price} = -0.79 \cdot \text{weight} + 0.88
+$$
+
+Rearranging into linear form:
+
+$$
+y + 0.79x - 0.88 = 0
+$$
+
+which is equivalent to:
+
+$$
+1.0 \cdot \text{price} + 0.79 \cdot \text{weight} - 0.88 = 0
+$$
+
+The activation is the weighted sum:
+
+$$
+a(x, y) \le 0 \quad\Longrightarrow\quad 0.79\cdot\text{weight} + \text{price} \le 0.88
+$$
+
+### Q4 - Confusion matrix (TP, TN, FP, FN)
+```{python}
+from IPython.display import display
+
+pred_labels = (0.79 * processed_df['weight'] + processed_df['price'] >= 0.88).astype(int)
+
+# true labels
+true_labels = processed_df['size'].astype(int)
+
+# confusion matrix components
+TP = ((pred_labels == 1) & (true_labels == 1)).sum()  # true positive - predicted big & actually big
+TN = ((pred_labels == 0) & (true_labels == 0)).sum()  # true negative - predicted small & actually small
+FP = ((pred_labels == 1) & (true_labels == 0)).sum()  # false positive - predicted big & actually small
+FN = ((pred_labels == 0) & (true_labels == 1)).sum()  # false negative - predicted small & actually big
+
+# display confusion matrix
+confusion_matrix = pd.DataFrame(
+    [[TP, FP],
+     [FN, TN]],
+    index=['Actual Big (1)', 'Actual Small (0)'],
+    columns=['Predicted Big (1)', 'Predicted Small (0)']
+)
+
+print("Confusion Matrix:")
+display(confusion_matrix)
+```
+### Q5 Accuracy and Rates
+```{python}
+# metrics / rates
+accuracy = (TP + TN) / (TP + TN + FP + FN)
+error_rate = 1 - accuracy
+true_positive_rate = TP / (TP + FN) 
+true_negative_rate = TN / (TN + FP)  
+false_positive_rate = FP / (FP + TN)
+false_negative_rate = FN / (FN + TP)
+
+print(f"Accuracy: {accuracy:.3f}")
+print(f"Error rate: {error_rate:.3f}")
+print(f"True Positive Rate (TPR / Recall for big): {true_positive_rate:.3f}")
+print(f"True Negative Rate (TNR / Specificity): {true_negative_rate:.3f}")
+print(f"False Positive Rate (FPR): {false_positive_rate:.3f}")
+print(f"False Negative Rate (FNR): {false_negative_rate:.3f}")
+```
+
+### Q6 - Similarity of All Data Sets
+
+# Comparison of Datasets and Metrics
+
+## 1. Confusion and Accuracy
+
+| Dataset | Separation | Accuracy | TPR (Big) | TNR (Small) | FPR  | FNR  |
+|---------|------------|----------|------------|-------------|------|------|
+| A       | Most      | 1     | 1      | 1        | 0  | 0  |
+| B       | Moderate  | 0.987   | 0.991     | 0.984      | 0.016 | 0.009 |
+| C       | Least     | 0.725      | 0.739        | 0.711         | 0.289 | 0.261 |
+
+- **Dataset A**: Big and small cars are clearly clustered →  All predictions correct.  
+- **Dataset B**: Classes start to overlap → some misclassifications.  
+- **Dataset C**: Strong overlap → many false positives and false negatives, lower accuracy.
+
+---
+
+## 2. Why the datasets differ
+
+- Datasets represent progressively more challenging classification problems:  
+  - A: clearly separated clusters  
+  - B: partially overlapping  
+  - C: heavily overlapping  
+
+---
+
+## 3. Role of Normalization
+
+- Features (price, weight) have different scales.  
+- Normalizing to [0,1] ensures **both features contribute proportionally** to the linear separator.  
+- Without normalization, the larger-scale feature would dominate the decision, reducing classifier performance.
+
+---
+
 # Part 2 — McCulloch–Pitts Neuron
+
+**Neuron Output Rule**
+
+$$
+\text{Output} =
+\begin{cases}
+1, & \text{if } \text{net} \geq 0 \\
+0, & \text{if } \text{net} < 0
+\end{cases}
+$$
+
+---
+
+**Truth Table**
+
+| X | Y | Z | Net = \(-3X + 3Y + Z\) | Inequality        | Output |
+|---|---|---|-------------------------|------------------|--------|
+| 0 | 0 | 0 | \(-3(0) + 3(0) + 0 = 0\)  | \(0 \geq -1\)     | 1      |
+| 0 | 0 | 1 | \(-3(0) + 3(0) + 1 = 1\)  | \(1 \geq -1\)     | 1      |
+| 0 | 1 | 0 | \(-3(0) + 3(1) + 0 = 3\)  | \(3 \geq -1\)     | 1      |
+| 0 | 1 | 1 | \(-3(0) + 3(1) + 1 = 4\)  | \(4 \geq -1\)     | 1      |
+| 1 | 0 | 0 | \(-3(1) + 3(0) + 0 = -3\) | \(-3 < -1\)       | 0      |
+| 1 | 0 | 1 | \(-3(1) + 3(0) + 1 = -2\) | \(-2 < -1\)       | 0      |
+| 1 | 1 | 0 | \(-3(1) + 3(1) + 0 = 0\)  | \(0 \geq -1\)     | 1      |
+| 1 | 1 | 1 | \(-3(1) + 3(1) + 1 = 1\)  | \(1 \geq -1\)     | 1      |
+
+---
+
+**Logic Function**
+
+$$
+y = X + Y \quad \text{(equivalently } y = \lnot X \lor Y \text{)}
+$$
+
+*Justification:* The neuron fires (\(y=1\)) whenever \(X=0\) or \(Y=1\), regardless of the value of \(Z\).
+
+---
+
+**Activation Range**
+
+$$
+\text{Range of net values: } (-2, \; 0]
+$$
+
